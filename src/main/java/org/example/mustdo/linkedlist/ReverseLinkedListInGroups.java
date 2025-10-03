@@ -3,10 +3,12 @@ package org.example.mustdo.linkedlist;
 class Node {
     int data;
     Node next;
+    Node random;
 
     Node(int x) {
         data = x;
         next = null;
+        random = null;
     }
 }
 
