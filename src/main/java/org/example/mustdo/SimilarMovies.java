@@ -12,7 +12,7 @@ public class SimilarMovies {
         movieRatings.put("MOVIE A", 4);
         movieRatings.put("MOVIE B", 6);
         movieRatings.put("MOVIE C", 8);
-        movieRatings.put("MOVIE D", 2);
+        movieRatings.put("MOVIE D", 10);
 
         Map<String, List<String>> movieGraph = new HashMap<>();
         movieGraph.put("MOVIE A", Arrays.asList("MOVIE B"));

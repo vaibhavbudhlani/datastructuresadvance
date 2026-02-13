@@ -21,10 +21,12 @@ public class VerticalTraversal {
     public static void main(String[] args) {
         Integer[] arr = {3,9,20,null,null,15,7};
         Integer[] arr1 =  {3,1,4,0,2,2};
-        TreeNode root = TreeBuilder.buildTree(arr1);
+        Integer[] arr2 = {20, 8, 22, 5, 3, 4, 25, null, null, 10, 14, null, null, 28, null};
+        TreeNode root = TreeBuilder.buildTree(arr2);
         VerticalTraversal vt = new VerticalTraversal();
-        List<List<Integer>> ans = vt.verticalTraversalUsingDFS(root);
-        System.out.println(ans);
+        vt.bottomView(root).forEach(System.out::println);
+      //  List<List<Integer>> ans = vt.verticalTraversalUsingDFS(root);
+        //System.out.println(ans);
 
 
     }
@@ -34,8 +36,8 @@ public class VerticalTraversal {
         if (root == null) {
             return ans;
         }
-        // Map: col -> List of (row, value)
-        Map<Integer, List<int[]>> map = new TreeMap<>();
+        // Map: col -> List of NodeInfo objects containing row and value
+        Map<Integer, List<NodeInfo>> map = new TreeMap<>();
         Queue<Helper> q = new LinkedList<>();
         Helper obj = new Helper();
         obj.node = root;
@@ -49,8 +51,8 @@ public class VerticalTraversal {
                 TreeNode node = ob.node;
                 int row = ob.row;
                 int col = ob.col;
-                // Store (row, value) for sorting later
-                map.computeIfAbsent(col, k -> new ArrayList<>()).add(new int[]{row, node.val});
+                // Store NodeInfo with row and value for sorting later
+                map.computeIfAbsent(col, k -> new ArrayList<>()).add(new NodeInfo(col, row, node.val));
                 if (node.left != null) {
                     Helper helper = new Helper();
                     helper.node = node.left;
@@ -67,15 +69,20 @@ public class VerticalTraversal {
                 }
             }
         }
-        for (Map.Entry<Integer, List<int[]>> entry : map.entrySet()) {
-            List<int[]> ls = entry.getValue();
-            // Sort by row, then value
-            ls.sort((a, b) -> a[0] == b[0] ? Integer.compare(a[1], b[1]) : Integer.compare(a[0], b[0]));
-            List<Integer> colList = new ArrayList<>();
-            for (int[] pair : ls) {
-                colList.add(pair[1]);
+        for (Map.Entry<Integer, List<NodeInfo>> entry : map.entrySet()) {
+            List<NodeInfo> nodeList = entry.getValue();
+            // Sort by row first, then by value if rows are same
+            nodeList.sort((a, b) -> {
+                if (a.row != b.row) return Integer.compare(a.row, b.row);
+                return Integer.compare(a.val, b.val);
+            });
+
+            // Extract values and add to result
+            List<Integer> values = new ArrayList<>();
+            for (NodeInfo nodeInfo : nodeList) {
+                values.add(nodeInfo.val);
             }
-            ans.add(colList);
+            ans.add(values);
         }
         return ans;
     }
@@ -103,5 +110,42 @@ public class VerticalTraversal {
         nodes.add(new NodeInfo(col, row, node.val));
         dfsNodeInfo(node.left, row + 1, col - 1, nodes);
         dfsNodeInfo(node.right, row + 1, col + 1, nodes);
+    }
+
+    public ArrayList<Integer> bottomView(TreeNode root) {
+        List<int[]> ls =new ArrayList<>();
+        Map<Integer,Integer> tm = new TreeMap<>();
+        dfs(root, ls,0 , 0);
+
+        System.out.println(ls);
+        ls.sort( (a,b) ->{
+            if(a[0] != b[0]){
+                return Integer.compare(a[0], b[0]);
+            }
+            else if(a[1] != b[1]){
+                return Integer.compare(b[1],a[1]);
+            }
+            else{
+                return Integer.compare(b[2],a[2]);
+            }
+        });
+        System.out.println(ls);
+        for(int[] vb:ls){
+            if(!tm.containsKey(vb[0])){
+                tm.put(vb[0],vb[2]);
+            }
+        }
+        return new ArrayList<>(tm.values());
+
+    }
+
+
+    public void dfs(TreeNode node,List<int[]> ls, int col, int row){
+        if(node == null ){
+            return;
+        }
+        ls.add(new int[]{col,row,node.val});
+        dfs(node.left,ls, col-1, row+1);
+        dfs(node.right, ls,col+1, row+1);
     }
 }
