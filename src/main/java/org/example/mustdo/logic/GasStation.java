@@ -78,6 +78,7 @@ public class GasStation {
         if(tcost > tgas){
             return -1;
         }
+
         int temp = 0;
         for(int i=0;i<gas.length;i++){
             temp += (gas[i] - cost[i]);
