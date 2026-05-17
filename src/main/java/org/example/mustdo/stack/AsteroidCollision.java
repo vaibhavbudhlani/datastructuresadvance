@@ -9,9 +9,9 @@ public class AsteroidCollision {
         AsteroidCollision collision = new AsteroidCollision();
 
         int[] res = collision.asteroidCollision(a);
-//        for (int v : res) {
-//            System.out.print(v + " ");
-//        }
+        for (int v : res) {
+            System.out.print(v + " ");
+        }
     }
 
     public int[] asteroidCollision(int[] asteroids) {
